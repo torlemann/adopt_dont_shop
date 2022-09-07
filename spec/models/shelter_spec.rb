@@ -80,6 +80,16 @@ RSpec.describe Shelter, type: :model do
         expect(Shelter.pending_apps).to_not include(@shelter_3)
       end
     end
+
+    describe 'info' do
+      it 'returns an object from Shelter with only name and city' do
+        shelter = Shelter.info(@shelter_1.id)
+        expect(shelter.name).to eq("Aurora shelter")
+        expect(shelter.city).to eq("Aurora, CO")
+        expect(shelter.pets).to eq([])
+        expect(shelter).to_not have_attribute(:rank)
+      end
+    end
   end
 
   describe 'instance methods' do
@@ -95,6 +105,12 @@ RSpec.describe Shelter, type: :model do
       end
     end
 
+    describe '.average_pet_age' do
+      it 'returns the average age of shelters pets' do
+        expect(@shelter_1.average_pet_age).to eq(4.33)
+      end
+    end
+
     describe '.shelter_pets_filtered_by_age' do
       it 'filters the shelter pets based on given params' do
         expect(@shelter_1.shelter_pets_filtered_by_age(5)).to eq([@pet_4])
@@ -104,6 +120,18 @@ RSpec.describe Shelter, type: :model do
     describe '.pet_count' do
       it 'returns the number of pets at the given shelter' do
         expect(@shelter_1.pet_count).to eq(3)
+      end
+    end
+
+    describe 'num_adoptable_pets' do
+      it 'returns the number of adoptable pets' do
+        expect(@shelter_1.num_adoptable_pets).to eq(2)
+      end
+    end
+
+    describe 'num_pets_adopted' do
+      it 'returns the num of pets who have been adopted' do
+        expect(@shelter_1.num_pets_adopted).to eq(1)
       end
     end
   end

@@ -62,10 +62,17 @@ RSpec.describe 'Admin Shelters Index' do
       expect(page).to have_content("Shelters With Pending Applications")
 
       within("#pending_apps") do
-        expect(page).to have_link(@craigs.name)
-        expect(page).to have_link(@aurora.name)
-        expect(page).to have_link(@fontaine.name)
-        expect(page).to_not have_link(@damon.name)
+        expect(page).to have_link(@craigs.name, href: "/admin/shelters/#{@craigs.id}")
+        expect(page).to have_link(@aurora.name, href: "/admin/shelters/#{@aurora.id}")
+        expect(page).to have_link(@fontaine.name, href: "/admin/shelters/#{@fontaine.id}")
+        expect(page).to_not have_link(@damon.name, href: "/admin/shelters/#{@damon.id}")
+      end
+    end
+
+    it 'lists shelters with pending applications alphabetically' do
+      within("#pending_apps") do
+        expect(@aurora.name).to appear_before(@craigs.name)
+        expect(@craigs.name).to appear_before(@fontaine.name)
       end
     end
   end
