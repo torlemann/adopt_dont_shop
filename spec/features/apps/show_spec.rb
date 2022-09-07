@@ -3,11 +3,12 @@ require 'rails_helper'
 RSpec.describe 'Application show page' do
   before :each do
     @shelter = Shelter.create!(name: "Craig's Raccoon Emporium", rank: 1, city: "Omaha, NE")
+    @other_shelter = Shelter.create!(name: "Ding Dong's Coon Ditch", rank: 1, city: "Omaha, NE")
 
     @pet_1 = @shelter.pets.create!(name: "King Trash Mouth", age: 14)
     @pet_2 = @shelter.pets.create!(name: "Princess Dumptruck", age: 18)
     @pet_3 = @shelter.pets.create!(name: "Eggs Sinclair", age: 10)
-    @pet_4 = @shelter.pets.create!(name: "Monster Truck Wendy", age: 5)
+    @pet_4 = @other_shelter.pets.create!(name: "Monster Truck Wendy", age: 5)
 
     @app = @shelter.apps.create!(
       name: "Gob Beldof", 
@@ -67,12 +68,11 @@ RSpec.describe 'Application show page' do
       within("#pets_wanted") do
         @app.pets.each do |pet|
           expect(page).to have_content(pet.name)
-          expect(page).to have_content(pet.age)
+          expect(page).to have_content(pet.shelter.name)
         end
         expect(page).to_not have_content(@pet_1.name)
-        expect(page).to_not have_content(@pet_1.age)
         expect(page).to_not have_content(@pet_4.name)
-        expect(page).to_not have_content(@pet_4.age)
+        expect(page).to_not have_content(@pet_4.shelter.name)
       end
       
     end

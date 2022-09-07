@@ -1,5 +1,4 @@
-<h1>Application Show Page</h1>
-<h3><%= @app.shelter.name %></h3>
+<h1>Application</h1>
 <p>Name: <%= @app.name %></p>
 <p>Address: <%= "#{@app.address}, #{@app.city} #{@app.zip_code}" %></p>
 <% if @app.description.present? %>
@@ -7,21 +6,15 @@
 <% end %>
 <p>Status: <%= @app.status %><p>
 <% if !@app.pets.empty? %>
-  <strong><%= "Links to Pets" %></strong>
+  <strong><%= "Links to Pets Applied For:" %></strong>
+  <ul id="pets_wanted">
   <% @app.pets.each do |pet| %>
-    <%= link_to pet.name, "/pets/#{pet.id}" %>
-  <% end %>
-<% end %>
-
-<p>Pets Interested in:</p>
-<ul id="pets_wanted">
-<% @app.pets.each do |pet| %>
   <li>
-  Name: <%= pet.name %>
-  Age: <%= pet.age %>
-  </li>
+    <%= link_to "#{pet.name} at #{pet.shelter.name}", "/pets/#{pet.id}" %>
+    </li>
+  <% end %>
+  </ul>
 <% end %>
-</ul>
 
 <%= form_with url: "/apps/#{@app.id}", method: :get, local: :true do |form| %>
   <p>Add a Pet to this Application:</p>
@@ -37,22 +30,27 @@
       <%= button_to "Adopt this pet", "/apps/#{@app.id}", method: :get, params: { pet_id: pet.id }, local: :true %>
     </div>
   <% end %>
-<% end %>
+<% end %><br><br>
 
 <% if @app.pets.count > 0 %>
   <div id="submit_app">
-    <%= form_with url: "/apps/#{@app.id}", method: :patch, local: :true do |form| %>
-      <p>Please describe why you would make a good owner for these pet(s):</p>
-      <%= form.label :description, "Description" %>
-      <%= form.text_field :description %>
-      <%= form.hidden_field :status, value: "Pending" %>
-      <%= form.submit "Submit Application" %>
+    <% if !@app.description.present? %>
+      <%= form_with url: "/apps/#{@app.id}", method: :patch, local: :true do |form| %>
+        <p><strong>Please describe why you would make a good owner for these pet(s):</strong></p>
+        <%= form.label :description, "Description" %>
+        <%= form.text_field :description %>
+        <%= form.hidden_field :status, value: "Pending" %>
+        <%= form.submit "Submit Application" %>
+      <% end %>
+    <% else %>
+      <%= form_with url: "/apps/#{@app.id}", method: :patch, local: :true do |form| %>
+        <p><strong>Update why you would make a good owner for these pet(s):</strong></p>
+        <%= form.label :description, "Description" %>
+        <%= form.text_field :description %>
+        <%= form.hidden_field :status, value: "In progress" %>
+        <%= form.submit "Update Application" %>
+      <% end %>
     <% end %>
   </div>
 <% end %>
 <br><br>
-
-<strong>List of Shelter Pets</strong>
-<% @app.shelter.pets.each do |pet| %>
-  <p><%= pet.name %></p>
-<% end %>
